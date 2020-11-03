@@ -1,3 +1,5 @@
+.\psping.exe -t SQL01:1433 |Foreach{"{0} - {1}" -f (Get-Date),$_} | Tee-object -FilePath "C:\Log\SQL01_log.txt"
+
 systeminfo | find /i "Boot Time"
 
 -- Powershell Version 
