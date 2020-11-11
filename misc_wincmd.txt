@@ -1,5 +1,16 @@
 .\psping.exe -t SQL01:1433 |Foreach{"{0} - {1}" -f (Get-Date),$_} | Tee-object -FilePath "C:\Log\SQL01_log.txt"
 
+$server = @('s1','s2')
+while($true)
+{
+$server | ForEach-Object {
+if(-not(test-connection $PSItem -Count 1 -Quiet )){
+    Write-Output "$($PSItem) : $(get-date) - Request Timed Out" |
+    Out-File c:\_tools\S_log.txt -Append
+}
+}
+}
+
 mofcomp "C:\Program Files (x86)\Microsoft SQL Server\130\Shared\sqlmgmproviderxpsp2up.mof"
 
 $Begin = Get-Date -Date '12/10/2020 04:30:00'
