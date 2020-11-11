@@ -2,6 +2,14 @@
 
 mofcomp "C:\Program Files (x86)\Microsoft SQL Server\130\Shared\sqlmgmproviderxpsp2up.mof"
 
+$Begin = Get-Date -Date '12/10/2020 04:30:00'
+$End = Get-Date -Date '12/10/2020 05:30:00'
+#Get-EventLog -LogName System -After $Begin -Before $End
+Get-EventLog -LogName Application -After $Begin -Before $End
+#Get-EventLog -LogName Setup -After $Begin -Before $End
+Get-EventLog -LogName Security -After $Begin -Before $End | Where-Object {$_.EntryType -eq 'FailureAudit'} | Out-GridView
+
+
 systeminfo | find /i "Boot Time"
 
 -- Powershell Version 
