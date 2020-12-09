@@ -35,6 +35,13 @@ FROM AG
 
 -----------------------------------------------------------------------------------------------------------
 
+DECLARE @StaticportNo NVARCHAR(10);
+
+EXEC xp_instance_regread @rootkey = 'HKEY_LOCAL_MACHINE'
+	,@key = 'Software\Microsoft\Microsoft SQL Server\MSSQLServer\SuperSocketNetLib\Tcp\IpAll'
+	,@value_name = 'TcpPort'
+	,@value = @StaticportNo OUTPUT
+
 SELECT es.login_name
 	,es.program_name
 	,db_name(es.database_id) [db_name]
@@ -43,8 +50,11 @@ SELECT es.login_name
 	,ec.local_net_address
 	,ec.client_tcp_port
 	,ISNULL(agl.dns_name, @@Servername) dns_name
-	,aglip.ip_address
-	,agl.port
+	,CASE 
+		WHEN net_transport ! = 'Shared Memory'
+			THEN ISNULL(aglip.ip_address, ec.local_net_address)
+		END ip_address
+	,ISNULL(agl.port, @StaticportNo) port
 	,ec.encrypt_option
 	,ec.auth_scheme
 FROM sys.dm_exec_connections ec
