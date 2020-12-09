@@ -58,6 +58,6 @@ SELECT es.login_name
 	,ec.encrypt_option
 	,ec.auth_scheme
 FROM sys.dm_exec_connections ec
-LEFT JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
+JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
 LEFT JOIN sys.availability_group_listener_ip_addresses aglip ON ec.local_net_address = aglip.ip_address
 LEFT JOIN sys.availability_group_listeners agl ON agl.listener_id = aglip.listener_id
