@@ -32,3 +32,22 @@ AS (
 	)
 SELECT *
 FROM AG
+
+-----------------------------------------------------------------------------------------------------------
+
+SELECT es.login_name
+	,es.program_name
+	,db_name(es.database_id) [db_name]
+	,ec.net_transport
+	,ec.client_net_address
+	,ec.local_net_address
+	,ec.client_tcp_port
+	,ISNULL(agl.dns_name, @@Servername) dns_name
+	,aglip.ip_address
+	,agl.port
+	,ec.encrypt_option
+	,ec.auth_scheme
+FROM sys.dm_exec_connections ec
+LEFT JOIN sys.dm_exec_sessions es ON ec.session_id = es.session_id
+LEFT JOIN sys.availability_group_listener_ip_addresses aglip ON ec.local_net_address = aglip.ip_address
+LEFT JOIN sys.availability_group_listeners agl ON agl.listener_id = aglip.listener_id
