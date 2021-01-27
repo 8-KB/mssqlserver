@@ -20,6 +20,10 @@ Get-EventLog -LogName Application -After $Begin -Before $End
 #Get-EventLog -LogName Setup -After $Begin -Before $End
 Get-EventLog -LogName Security -After $Begin -Before $End | Where-Object {$_.EntryType -eq 'FailureAudit'} | Out-GridView
 
+-- Delete empty folders
+echo off
+for /f "usebackq delims=" %%d in (`"dir "%~dp0" /ad/b/s | sort /R"`) do rd "%%d"
+---
 
 systeminfo | find /i "Boot Time"
 
