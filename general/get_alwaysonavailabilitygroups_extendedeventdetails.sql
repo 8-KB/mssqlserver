@@ -1,5 +1,6 @@
-;
-
+DECLARE @timeStr NVARCHAR(50) = CAST(SYSDATETIMEOFFSET() AS NVARCHAR(50));
+DECLARE @timeDiff INT=(SELECT CAST(REPLACE(REPLACE(RIGHT(@timeStr, 6),'+',''),':00','') AS INT));
+DECLARE @days INT=2;
 WITH cte_HADR
 AS (
 	SELECT object_name
@@ -8,7 +9,7 @@ AS (
 		WHERE object_name != 'hadr_db_partner_set_sync_state'
 	)
 SELECT object_name
-	,DATEADD( hour,12,data.value('(/event/@timestamp)[1]', 'datetime')) AS [timestamp] --NZT
+	,DATEADD( hour,@timeDiff,data.value('(/event/@timestamp)[1]', 'datetime')) AS [timestamp] --NZT
 	,data.value('(/event/data[@name=''error_number''])[1]', 'varchar(max)') AS previous_state
 	,data.value('(/event/data[@name=''previous_state''])[1]', 'varchar(max)') AS previous_state
 	,data.value('(/event/data[@name=''current_state''])[1]', 'varchar(max)') AS current_state
@@ -16,6 +17,6 @@ SELECT object_name
 	,data.value('(/event/data[@name=''availability_replica_name''])[1]', 'varchar(max)') AS availability_replica_name
 	,data.value('(/event/data[@name=''message''])[1]', 'varchar(max)') AS [message]
 FROM cte_HADR
-WHERE data.value('(/event/@timestamp)[1]', 'datetime') > getdate() - 30
+WHERE data.value('(/event/@timestamp)[1]', 'datetime') > getdate() - @days
 and object_name like 'availability_replica%'
-ORDER BY data.value('(/event/@timestamp)[1]', 'datetime') ASC
+ORDER BY data.value('(/event/@timestamp)[1]', 'datetime') ASC;
