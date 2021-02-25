@@ -43,4 +43,5 @@ SQL Max Memory Calculator : [SqlMax](http://sqlmax.chuvash.eu/)
 MSSQL Credentials : [NetSPI_PS](https://github.com/NetSPI/Powershell-Modules)
 
 
-### Email : tselvan@sqlba.net
+### Email : tselvan@sqldba.net
+

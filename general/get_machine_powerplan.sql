@@ -1,6 +1,6 @@
 DECLARE @outval VARCHAR(36);
 
-IF @outval IS NULL /* If power plan was not set by group policy, get local value [Git Hub Issue #1620]*/
+IF @outval IS NULL /* If power plan was not set by group policy */
 	EXEC master.sys.xp_regread @rootkey = 'HKEY_LOCAL_MACHINE'
 		,@key = 'SYSTEM\CurrentControlSet\Control\Power\User\PowerSchemes'
 		,@value_name = 'ActivePowerScheme'

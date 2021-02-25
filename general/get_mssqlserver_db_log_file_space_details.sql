@@ -12,7 +12,7 @@ INSERT INTO #logsize (
 	,log_Space_Used_MB
 	,log_Free_Space_MB
 	)
-EXEC sp_msforeachdb 'use [?]; 
+EXEC sp_MSforeachdb 'use [?]; 
   select DB_NAME() AS DbName, 
 sum(size)/128.0 AS Log_File_Size_MB, 
 sum(CAST(FILEPROPERTY(name, ''SpaceUsed'') AS INT))/128.0 as log_Space_Used_MB, 
