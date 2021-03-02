@@ -19,7 +19,7 @@ while ($true)
 	}
 }
 
-#PSPing DateTime Log\SQL01_log
+#PSPing DateTime Log
 
 .\psping.exe -t SQL01:1433 | ForEach-Object { "{0} - {1}" -f (Get-Date),$_ } | Tee-Object -FilePath "C:\Log\SQL01_log.txt"
 
