@@ -18,7 +18,7 @@ EXEC sp_MSforeachdb 'use [?];
 sum(size)/128.0 AS Log_File_Size_MB, 
 sum(CAST(FILEPROPERTY(name, ''SpaceUsed'') AS INT))/128.0 as log_Space_Used_MB, 
 SUM( size)/128.0 - sum(CAST(FILEPROPERTY(name,''SpaceUsed'') AS INT))/128.0 AS log_Free_Space_MB  
-from sys.database_files  where type=1 group by type'
+from sys.database_files  where type=1 group by type';
 
 SELECT @@SERVERNAME [Server]
 	,l.*
