@@ -37,14 +37,16 @@ ORDER BY msdb.dbo.backupset.database_name
 ---------------------------
 -- Missing backup by date
 ---------------------------
-SELECT CAST(DATEADD(DAY, number + 1, GETDATE() - 8) AS DATE) [backup_date]
+DECLARE @day int=1
+
+SELECT CAST(DATEADD(DAY, number + 1, GETDATE() - (@day+1)) AS DATE) [backup_date]
 	,sd.name database_name
 INTO #date_list
 FROM master..spt_values
 CROSS APPLY sys.databases sd
 WHERE type = 'P'
-	AND DATEADD(DAY, number + 1, GETDATE() - 8) < GETDATE()
-	AND sd.name != 'tempdb'
+	AND DATEADD(DAY, number + 1, GETDATE() - (@day+1)) < GETDATE()
+	AND sd.name not in ( 'tempdb' )
 
 SELECT cast(backup_start_date AS DATE) backup_date
 	,database_name
@@ -53,14 +55,14 @@ FROM msdb.dbo.backupset
 WHERE is_copy_only != 1
 	AND is_snapshot ! = 1
 	AND type != 'L'
-	AND backup_start_date > GETDATE() - 7
-	AND database_name != 'tempdb'
+	AND backup_start_date > GETDATE() - (@day + 7)
+	AND database_name not in ( 'tempdb')
 
-SELECT *
+SELECT DATENAME(WEEKDAY,dl.backup_date) [week_day],*
 FROM #date_list dl
 LEFT JOIN #backup_list bl ON dl.backup_date = bl.backup_date
 	AND dl.database_name = bl.database_name
+WHERE bl.backup_date is null
 
 DROP TABLE #backup_list
-
 DROP TABLE #date_list
