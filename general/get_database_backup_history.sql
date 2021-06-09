@@ -37,16 +37,39 @@ ORDER BY msdb.dbo.backupset.database_name
 ---------------------------
 -- Missing backup by date
 ---------------------------
-DECLARE @day int=1
+if  object_id('tempdb..#dbtmp','u') is not null drop table #dbtmp
+create table #dbtmp (
+	databasename sysname
+)
+IF charindex('Microsoft SQL Server  2000',@@version) =0 
+BEGIN 
+	insert into #dbtmp (databasename)
+	select name
+	from sys.databases 
+	where state=0 and database_id <> 2 and is_in_standby<>1  
+	if object_id('sys.fn_hadr_backup_is_preferred_replica') is not null
+	begin
+		delete #dbtmp
+		where sys.fn_hadr_backup_is_preferred_replica(databasename)=0
+	end
+END
+ELSE
+BEGIN 
+	insert into #dbtmp (databasename)
+	select name
+	from master.dbo.sysdatabases 
+	where dbid <> 2 and DATABASEPROPERTYEX(name, 'Status') = 'ONLINE' and DATABASEPROPERTYEX(name, 'IsInStandBy') = 0
+END
+
+DECLARE @day int=7
 
 SELECT CAST(DATEADD(DAY, number + 1, GETDATE() - (@day+1)) AS DATE) [backup_date]
-	,sd.name database_name
+	,sd.databasename databasename
 INTO #date_list
 FROM master..spt_values
-CROSS APPLY sys.databases sd
+CROSS APPLY #dbtmp sd
 WHERE type = 'P'
 	AND DATEADD(DAY, number + 1, GETDATE() - (@day+1)) < GETDATE()
-	AND sd.name not in ( 'tempdb' )
 
 SELECT cast(backup_start_date AS DATE) backup_date
 	,database_name
@@ -56,12 +79,11 @@ WHERE is_copy_only != 1
 	AND is_snapshot ! = 1
 	AND type != 'L'
 	AND backup_start_date > GETDATE() - (@day + 7)
-	AND database_name not in ( 'tempdb')
 
 SELECT DATENAME(WEEKDAY,dl.backup_date) [week_day],*
 FROM #date_list dl
 LEFT JOIN #backup_list bl ON dl.backup_date = bl.backup_date
-	AND dl.database_name = bl.database_name
+	AND dl.databasename = bl.database_name
 WHERE bl.backup_date is null
 
 DROP TABLE #backup_list
