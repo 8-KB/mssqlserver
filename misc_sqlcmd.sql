@@ -93,3 +93,5 @@ SELECT SERVERPROPERTY('MachineName') MachineName
 	,SUBSTRING(cast(@@VERSION AS VARCHAR(max)), 1, CHARINDEX(CAST(SERVERPROPERTY('productversion') AS VARCHAR(max)), cast(@@VERSION AS VARCHAR(max)), 1) + len(CAST(SERVERPROPERTY('productversion') AS VARCHAR(max)))) Version
 WHERE SERVERPROPERTY('MachineName') ='';
 ------------------------------------------------------------------------
+RAISERROR ('Test alert', 16, 1) WITH log;
+
