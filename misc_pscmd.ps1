@@ -1,10 +1,5 @@
-﻿#Powershell Version 
-
-$PSVersionTable.PSVersion
-
-#ComputerName 
-
-$env:computername
+Get-ChildItem env: # $env:computername #ComputerName 
+Get-Variable $PSVersionTable.PSVersion #Powershell Version 
 
 #Reboot time & username
 Get-EventLog -LogName System  -Newest 10000 | Where-Object {$_.eventid -eq '1074'} | Select-Object MachineName , UserName , TimeGenerated |Sort-Object TimeGenerated -Descending
@@ -88,9 +83,3 @@ $wc = New-Object System.Net.WebClient
 $wc.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
 
 Find-Module -Name "azurerm.storage" -Repository "PSGallery" | Save-Module -Path "C:\temp\PSModules\" -Verbose
-
-
-
-
-
-
