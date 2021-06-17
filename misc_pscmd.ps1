@@ -6,6 +6,9 @@ $PSVersionTable.PSVersion
 
 $env:computername
 
+#Reboot time & username
+Get-EventLog -LogName System  -Newest 10000 | Where-Object {$_.eventid -eq '1074'} | Select-Object MachineName , UserName , TimeGenerated |Sort-Object TimeGenerated -Descending
+
 #Test Connection - Record Timeout
 
 $server = @('s1','s2')
