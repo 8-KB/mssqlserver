@@ -29,7 +29,7 @@ SELECT @@SERVERNAME [Server]
 			THEN 'USE [' + d.name + N']' + CHAR(13) + CHAR(10) + 'DBCC SHRINKFILE (N''' + mf.name + N''' , ' + CAST(CAST(log_Free_Space_MB * @log_reduce_percent / 100 AS INT) AS NVARCHAR(128)) + ');' + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10)
 		END [tsql]
 FROM #logsize l
-LEFT JOIN sys.databases d ON l.DbName = d.name
+LEFT JOIN sys.databases d ON l.Dbname = d.name
 LEFT JOIN sys.master_files mf ON mf.database_id = d.database_id
 WHERE  mf.type_desc = 'LOG' --and d.database_id > 4
 DROP TABLE #logsize
