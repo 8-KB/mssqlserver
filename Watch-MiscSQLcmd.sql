@@ -95,3 +95,6 @@ WHERE SERVERPROPERTY('MachineName') ='';
 ------------------------------------------------------------------------
 RAISERROR ('Test alert', 16, 1) WITH log;
 
+--------------------------------------
+
+NET START MSSQLSERVER /T902 --MSDB restore and SQL not starting 
