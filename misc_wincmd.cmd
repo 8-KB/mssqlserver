@@ -20,18 +20,18 @@ Get-EventLog -LogName Application -After $Begin -Before $End
 #Get-EventLog -LogName Setup -After $Begin -Before $End
 Get-EventLog -LogName Security -After $Begin -Before $End | Where-Object {$_.EntryType -eq 'FailureAudit'} | Out-GridView
 
--- Delete empty folders
+REM -- Delete empty folders
 echo off
 for /f "usebackq delims=" %%d in (`"dir "%~dp0" /ad/b/s | sort /R"`) do rd "%%d"
----
+REM --
 
 systeminfo | find /i "Boot Time"
 
--- Powershell Version 
+REM -- Powershell Version 
 
 $PSVersionTable.PSVersion
 
---ComputerName 
+REM -- ComputerName 
 
 $env:computername
 
@@ -55,32 +55,32 @@ $largeSizefiles = get-ChildItem -path $path -recurse -ErrorAction "SilentlyConti
 #@{Name="Path";Expression={$_.directory}} -first $limit
 $largeSizefiles |Out-GridView
 
--- Services 
+REM -- Services 
 
 Get-WmiObject win32_service | select Name, DisplayName, State, PathName | Export-Csv -path "C:\services.csv"
 
--- file system information 
+REM -- file system information 
 
 fsutil fsinfo ntfsinfo d:\tempdb
 
-/* Filestream BP*/
+REM -- Filestream BP
 
 FSUTIL.EXE 8dot3name query F:
 FSUTIL.EXE 8dot3name set F: 1 
 fsutil.exe 8dot3name strip /s /v F:
 
--- Firewall 
+REM -- Firewall 
 
 netsh advfirewall firewall set rule group="windows management instrumentation (wmi)" new enable=yes
 
--- Reset Session 
+REM -- Reset Session 
 
 query session /server:SERVER_NAME
 reset session [ID] /server: SERVER_NAME
 for /f %i in (servers.txt) do query user *username* /server:%i  
 
 
--- Cluster BP
+REM -- Cluster BP
 
 netsh int tcp show global
 
@@ -92,11 +92,11 @@ get-cluster | fl *subnet*
 (get-cluster).SameSubnetDelay = 2000 
 (get-cluster).SameSubnetThreshold = 10 
 
--- Cluster Resouce Details 
+REM -- Cluster Resouce Details 
 
 Get-ClusterResource "SQL Network Name (XXXXXXXXX)" | %{ $_.Name = “YYYYYYYYYYY” }
 
--- Cluster AG Multisubnet 
+REM -- Cluster AG Multisubnet 
 
 Get-ClusterResource 
 Get-ClusterResource ag01 | Get-ClusterParameter
@@ -112,7 +112,7 @@ fsutil fsinfo ntfsinfo d:\tempdb
 $wql = "SELECT Label, Blocksize, Name FROM Win32_Volume WHERE FileSystem='NTFS'"
 Get-WmiObject -Query $wql -ComputerName '.' | Select-Object Label, Blocksize, Name
 
-/* Filestream BP*/
+REM -- Filestream BP
 FSUTIL.EXE 8dot3name query F:
 FSUTIL.EXE 8dot3name set F: 1 
 fsutil.exe 8dot3name strip /s /v F:
@@ -141,7 +141,7 @@ Get-ClusterResource ag01 | Set-ClusterParameter HostRecordTTL 30
 
 Get-ChildItem C:\WINDOWS\System32 -Filter *.txt -Recurse | % { $_.FullName }
 
--- Save PS Module
+REM -- Save PS Module
 
 $wc = New-Object System.Net.WebClient
 $wc.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials
@@ -150,10 +150,10 @@ Find-Module -Name "azurerm.storage" -Repository "PSGallery" | Save-Module -Path 
 
 $env:PSModulePath
 
-------------------------------------------------------------------------Replace#USERNAME#
+REM --------------------------------------------------------------------------Replace#USERNAME#
 exec xp_cmdshell 'powershell -command "([adsi]''WinNT://Domain/#USERNAME#,user'').ChangePassword(''oldpassword'',''newpassword'')"'
 
 
----------------
+REM -- ---------------
 
 VMWareToolBoxCMD stat balloon
