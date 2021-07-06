@@ -35,6 +35,10 @@ Get-ChildItem "C:\Program Files\Microsoft SQL Server" -Filter *.exe -Recurse | F
 Get-ChildItem "K:\" -Filter "*.*" -Recurse -File | Where-Object CreationTime -LT (Get-Date).AddDays(-180) | Select-Object fullname,creationtime | Out-GridView
 Get-ChildItem "J:\" -Filter "*.bak" -Recurse -File | Where-Object CreationTime -LT (Get-Date).AddDays(-20) | Select-Object fullname,creationtime,@{ N = 'SizeIngb'; E = { [double]('{0:N2}' -f ($_.Length / 1gb)) } } | Out-GridView
 
+# Remove empty folders
+Get-ChildItem -Recurse -Directory | ? { -Not ($_.EnumerateFiles('*',1) | Select-Object -First 1) } | Remove-Item -Recurse -Whatif
+
+
 #Search Text In Files
 
 Get-ChildItem `
